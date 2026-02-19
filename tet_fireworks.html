@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chúc Mừng Năm Mới</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;500;700&family=Pacifico&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --gold:#ffd36e;
+      --red:#8b0000;
+      --red2:#b40000;
+      --bg1:#0b0f1a;
+      --bg2:#1a0f0f;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0}
+    body{
+      font-family:'Be Vietnam Pro',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      color:#fff;
+      overflow-x:hidden;
+      background: radial-gradient(1200px 800px at 50% 120%, #2a0b0b 0%, var(--bg2) 40%, var(--bg1) 100%);
+    }
+
+    /* Header / hint */
+    .hero{
+      position:relative;
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      text-align:center;
+      padding:24px;
+    }
+    .title{
+      font-family:'Pacifico',cursive;
+      font-size: clamp(42px, 6vw, 84px);
+      color:var(--gold);
+      text-shadow:0 0 16px rgba(255,211,110,.6), 0 0 40px rgba(255,120,0,.35);
+      letter-spacing:2px;
+      margin:0 0 12px 0;
+    }
+    .hint{
+      font-size: clamp(16px, 2.2vw, 22px);
+      opacity:.95;
+      background: linear-gradient(90deg, rgba(255,255,255,.06), rgba(255,255,255,.14), rgba(255,255,255,.06));
+      border:1px solid rgba(255,255,255,.18);
+      padding:14px 18px;
+      border-radius:14px;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      animation: float 2.4s ease-in-out infinite;
+    }
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+
+    .lanterns{
+      position:absolute;inset:0;pointer-events:none;overflow:hidden
+    }
+    .lantern{
+      position:absolute;bottom:-120px;width:60px;height:80px;border-radius:30px 30px 20px 20px;
+      background: radial-gradient(circle at 50% 30%, #ff9a9a, #b40000 60%, #6b0000 100%);
+      box-shadow:0 0 20px rgba(255,80,80,.7), inset 0 -8px 14px rgba(0,0,0,.4);
+      animation: rise linear infinite;
+    }
+    .lantern::before{content:'';position:absolute;top:-8px;left:50%;transform:translateX(-50%);width:24px;height:10px;border-radius:6px;background:var(--gold);box-shadow:0 0 10px rgba(255,211,110,.8)}
+    .lantern::after{content:'';position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);width:2px;height:18px;background:var(--gold);box-shadow:0 0 10px rgba(255,211,110,.8)}
+    @keyframes rise{from{transform:translateY(0)}to{transform:translateY(-120vh)}}
+
+    /* Fireworks canvas */
+    #fw{
+      position:fixed;inset:0;display:none;z-index:10;pointer-events:none
+    }
+
+    /* Greeting */
+    .greeting{
+      position:fixed;inset:0;display:grid;place-items:center;z-index:20;pointer-events:none;opacity:0;transform:scale(.9);
+      transition:opacity .7s ease, transform .7s ease;
+      background: radial-gradient(800px 500px at 50% 60%, rgba(0,0,0,.35), transparent 60%);
+    }
+    .greeting.show{opacity:1;transform:scale(1)}
+    .card{
+      max-width:min(900px,92vw);
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.2);
+      border-radius:22px;padding:28px 26px;backdrop-filter: blur(10px);
+      box-shadow:0 30px 80px rgba(0,0,0,.6), inset 0 0 40px rgba(255,211,110,.08);
+      text-align:center
+    }
+    .card h2{font-family:'Pacifico',cursive;font-size: clamp(36px,5vw,64px);color:var(--gold);margin:0 0 12px 0;text-shadow:0 0 16px rgba(255,211,110,.6)}
+    .card p{font-size: clamp(16px,2.1vw,22px);line-height:1.6;margin:0}
+
+    /* small footer */
+    .foot{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);opacity:.6;font-size:12px}
+  </style>
+</head>
+<body>
+  <canvas id="fw"></canvas>
+  <audio id="tetMusic" preload="auto">
+    <!-- Đổi file nhạc của bạn thành tet.mp3 và để cùng thư mục -->
+    <source src="https://files.catbox.moe/vrni34.mp3" type="audio/mpeg" />
+  </audio>
+
+  <section class="hero">
+    <div class="lanterns" id="lanterns"></div>
+    <div>
+      <h1 class="title">Tết đến rồi</h1>
+      <div class="hint" id="hint">Lăn chuột để có điều bất ngờ</div>
+    </div>
+  </section>
+
+  <div class="greeting" id="greeting">
+    <div class="card">
+      <h2>Chúc Mừng Năm Mới</h2>
+      <p>
+        Chúc bạn một năm an khang thịnh vượng, học hành tấn tới, việc gì cũng suôn sẻ.
+        Gia đình sum vầy, sức khỏe dồi dào, tiền tài rủng rỉnh, niềm vui đủ đầy mỗi ngày.
+      </p>
+    </div>
+  </div>
+  <div class="foot">© New Year</div>
+
+  <script>
+    // lanterns
+    const lanterns = document.getElementById('lanterns');
+    function spawnLantern(){
+      const l = document.createElement('div');
+      l.className='lantern';
+      const size = 50 + Math.random()*40;
+      l.style.left = Math.random()*100 + 'vw';
+      l.style.width = size+'px';
+      l.style.height = size*1.3+'px';
+      l.style.animationDuration = (18+Math.random()*18)+'s';
+      lanterns.appendChild(l);
+      setTimeout(()=>l.remove(), 40000);
+    }
+    setInterval(spawnLantern, 900);
+
+    // scroll detection
+    let count = 0;
+    const threshold = 4; // 3-4 lần
+    let triggered = false;
+    const hint = document.getElementById('hint');
+    const music = document.getElementById('tetMusic');
+
+    function onScrollIntent(){
+      if(triggered) return;
+      count++;
+      if(count>=threshold){
+        triggered=true;
+        startShow();
+      }
+    }
+    window.addEventListener('wheel', (e)=>{ if(Math.abs(e.deltaY)>5) onScrollIntent(); }, {passive:true});
+    // mobile
+    let lastY=null;
+    window.addEventListener('touchstart', e=>{ lastY=e.touches[0].clientY; }, {passive:true});
+    window.addEventListener('touchmove', e=>{
+      const y=e.touches[0].clientY; if(lastY!==null && Math.abs(y-lastY)>12) onScrollIntent(); lastY=y;
+    }, {passive:true});
+
+    // fireworks
+    const canvas = document.getElementById('fw');
+    const ctx = canvas.getContext('2d');
+    let W,H; function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
+    window.addEventListener('resize', resize); resize();
+
+    class Particle{
+      constructor(x,y,hue){
+        const angle=Math.random()*Math.PI*2; const speed=Math.random()*5+2;
+        this.vx=Math.cos(angle)*speed; this.vy=Math.sin(angle)*speed;
+        this.x=x; this.y=y; this.life=100; this.hue=hue; this.size=Math.random()*2+1;
+      }
+      update(){
+        this.vy+=0.04; // gravity
+        this.x+=this.vx; this.y+=this.vy; this.life-=1;
+      }
+      draw(){
+        ctx.beginPath();
+        ctx.fillStyle=`hsla(${this.hue}, 100%, 60%, ${Math.max(this.life/100,0)})`;
+        ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill();
+      }
+    }
+    const particles=[];
+    function explode(x,y){
+      const hue = Math.floor(Math.random()*360);
+      const n=80+Math.floor(Math.random()*40);
+      for(let i=0;i<n;i++) particles.push(new Particle(x,y,hue));
+    }
+
+    function loop(){
+      ctx.fillStyle='rgba(0,0,0,0.18)';
+      ctx.fillRect(0,0,W,H);
+      for(let i=particles.length-1;i>=0;i--){
+        const p=particles[i]; p.update(); p.draw(); if(p.life<=0) particles.splice(i,1);
+      }
+      requestAnimationFrame(loop);
+    }
+
+    function startShow(){
+      hint.style.opacity='0';
+      canvas.style.display='block';
+      try{ music.currentTime=0; music.volume=0.7; music.play(); }catch(e){}
+      loop();
+      // periodic explosions
+      const boom = setInterval(()=>{
+        const x = Math.random()*W*0.8 + W*0.1;
+        const y = Math.random()*H*0.5 + H*0.1;
+        explode(x,y);
+      }, 500);
+      // show greeting after 3s
+      setTimeout(()=>{
+        document.getElementById('greeting').classList.add('show');
+      }, 3000);
+      // stop heavy spawns after 12s
+      setTimeout(()=> clearInterval(boom), 12000);
+    }
+  </script>
+</body>
+</html>
